@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:ubx_scan/ubx_scan_util.dart';
@@ -9,12 +10,13 @@ mixin UbxScanMixin<T extends StatefulWidget> on State<T> {
   @override
   void initState() {
     super.initState();
-
-    streamSubscription = UbxScanUtil.instance.start().listen((event) {
-      if (event != null) {
-        ubxCodeHandle(event.toString());
-      }
-    });
+    if (Platform.isAndroid) {
+      streamSubscription = UbxScanUtil.instance.start().listen((event) {
+        if (event != null) {
+          ubxCodeHandle(event.toString());
+        }
+      });
+    }
   }
 
   Future<void> ubxCodeHandle(String code);
