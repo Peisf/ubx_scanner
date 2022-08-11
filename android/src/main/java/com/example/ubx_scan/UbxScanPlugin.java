@@ -29,6 +29,8 @@ public class UbxScanPlugin implements FlutterPlugin, MethodCallHandler {
 
   private static final String DATA = "barcode_string";
   private static final String UBX_SCAN_ACTION = "android.intent.ACTION_DECODE_DATA";
+  private static final String ACTION_DATA_CODE_RECEIVED =
+          "com.sunmi.scanner.ACTION_DATA_CODE_RECEIVED";
 
   @Override
   public void onAttachedToEngine(@NonNull FlutterPluginBinding flutterPluginBinding) {
@@ -42,9 +44,13 @@ public class UbxScanPlugin implements FlutterPlugin, MethodCallHandler {
       @Override
       public void onListen(Object arguments, EventChannel.EventSink events) {
         receiver = broadcastReceiver(events);
-        IntentFilter filter = new IntentFilter();
-        filter.addAction(UBX_SCAN_ACTION);
-        context.registerReceiver(receiver, filter);
+        IntentFilter ubxFilter = new IntentFilter();
+        ubxFilter.addAction(UBX_SCAN_ACTION);
+        context.registerReceiver(receiver, ubxFilter);
+
+        IntentFilter smFilter = new IntentFilter();
+        smFilter.addAction(ACTION_DATA_CODE_RECEIVED);
+        context.registerReceiver(receiver, smFilter);
       }
 
       @Override
@@ -72,11 +78,22 @@ public class UbxScanPlugin implements FlutterPlugin, MethodCallHandler {
     return new BroadcastReceiver() {
       @Override
       public void onReceive(Context context, Intent intent) {
-        String code = intent.getStringExtra(DATA);
-        if (code != null && !code.isEmpty()){
-          System.out.printf("获取到的扫描结果：" + code);
-          eventSink.success(code);
+        String actionName = intent.getAction();
+        if (UBX_SCAN_ACTION.equals(actionName)){
+          String code = intent.getStringExtra("barcode_string");
+          if (code != null && !code.isEmpty()){
+            System.out.printf("---优博讯-----扫描结果：" + code);
+            eventSink.success(code);
+          }
         }
+        if (ACTION_DATA_CODE_RECEIVED.equals(actionName)){
+          String code = intent.getStringExtra("data");
+          if (code != null && !code.isEmpty()){
+            System.out.printf("---商米-----扫描结果：" + code);
+            eventSink.success(code);
+          }
+        }
+
       }
     };
   }
