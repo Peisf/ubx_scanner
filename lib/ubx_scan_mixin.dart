@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:ubx_scan/ubx_scan_util.dart';
@@ -10,15 +9,16 @@ mixin UbxScanMixin<T extends StatefulWidget> on State<T> {
   @override
   void initState() {
     super.initState();
-    if (Platform.isAndroid) {
-      streamSubscription = UbxScanUtil.instance.start().listen((event) {
-        if (event != null) {
-          ubxCodeHandle(event.toString());
-        }
-      });
-    }
+
+    /// 监听流
+    streamSubscription = UbxScanUtil.instance.start().listen((event) {
+      if (event != null) {
+        ubxCodeHandle(event.toString());
+      }
+    });
   }
 
+  /// 红外扫描头获取到数据的回调
   Future<void> ubxCodeHandle(String code);
 
   @override
