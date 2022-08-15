@@ -27,10 +27,14 @@ public class UbxScanPlugin implements FlutterPlugin, MethodCallHandler {
   private Context context;
   private static final String CHARGING_CHANNEL = "hm_flutter";
 
-  private static final String DATA = "barcode_string";
-  private static final String UBX_SCAN_ACTION = "android.intent.ACTION_DECODE_DATA";
+  /// 商米
+  private static final String SOURCE = "source_byte";
   private static final String ACTION_DATA_CODE_RECEIVED =
           "com.sunmi.scanner.ACTION_DATA_CODE_RECEIVED";
+  /// 优博讯
+  private static final String UBX_SCAN_ACTION = "android.intent.ACTION_DECODE_DATA";
+  /// 小码哥
+  private static final String SEUIC_SCAN_ACTION = "com.android.scanner.service_settings";
 
   @Override
   public void onAttachedToEngine(@NonNull FlutterPluginBinding flutterPluginBinding) {
@@ -51,6 +55,10 @@ public class UbxScanPlugin implements FlutterPlugin, MethodCallHandler {
         IntentFilter smFilter = new IntentFilter();
         smFilter.addAction(ACTION_DATA_CODE_RECEIVED);
         context.registerReceiver(receiver, smFilter);
+
+        IntentFilter xmgFilter = new IntentFilter();
+        xmgFilter.addAction(SEUIC_SCAN_ACTION);
+        context.registerReceiver(receiver,xmgFilter);
       }
 
       @Override
@@ -74,6 +82,7 @@ public class UbxScanPlugin implements FlutterPlugin, MethodCallHandler {
   public void onDetachedFromEngine(@NonNull FlutterPluginBinding binding) {
     channel.setMethodCallHandler(null);
   }
+
   private BroadcastReceiver broadcastReceiver(final EventChannel.EventSink eventSink){
     return new BroadcastReceiver() {
       @Override
@@ -88,12 +97,19 @@ public class UbxScanPlugin implements FlutterPlugin, MethodCallHandler {
         }
         if (ACTION_DATA_CODE_RECEIVED.equals(actionName)){
           String code = intent.getStringExtra("data");
+          byte[] arr = intent.getByteArrayExtra(SOURCE);
           if (code != null && !code.isEmpty()){
             System.out.printf("---商米-----扫描结果：" + code);
             eventSink.success(code);
           }
         }
-
+        if (SEUIC_SCAN_ACTION.equals(actionName)){
+          String code = intent.getStringExtra("scannerdata");
+          if (code != null && !code.isEmpty()){
+            System.out.printf("---小码哥-----扫描结果：" + code);
+            eventSink.success(code);
+          }
+        }
       }
     };
   }
