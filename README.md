@@ -3,6 +3,7 @@
 ## 支持PDA设备
     [^]: 优博讯
     [^]: 商米
+    [^]: 小码哥
 
 ## 如何使用
 ### 方式一: 混入模式
@@ -11,7 +12,7 @@ class MyApp extends StatefulWidget {
   @override
   _MyAppState createState() => _MyAppState();
 }
-// 第一步：混入ShangmiScanMixin
+// 第一步：混入UbxScanMixin
 class _MyAppState extends State<MyApp> with UbxScanMixin<MyApp> {
   String _code = '';
   
