@@ -35,6 +35,8 @@ public class UbxScanPlugin implements FlutterPlugin, MethodCallHandler {
   private static final String UBX_SCAN_ACTION = "android.intent.ACTION_DECODE_DATA";
   /// 小码哥
   private static final String SEUIC_SCAN_ACTION = "com.android.scanner.service_settings";
+  /// 成为
+  private static final String CHENGWEI_SCAN_ACTION = "com.scanner.broadcast";
 
   @Override
   public void onAttachedToEngine(@NonNull FlutterPluginBinding flutterPluginBinding) {
@@ -59,6 +61,10 @@ public class UbxScanPlugin implements FlutterPlugin, MethodCallHandler {
         IntentFilter xmgFilter = new IntentFilter();
         xmgFilter.addAction(SEUIC_SCAN_ACTION);
         context.registerReceiver(receiver,xmgFilter);
+
+        IntentFilter cwFilter = new IntentFilter();
+        cwFilter.addAction(CHENGWEI_SCAN_ACTION);
+        context.registerReceiver(receiver, cwFilter);
       }
 
       @Override
@@ -107,6 +113,13 @@ public class UbxScanPlugin implements FlutterPlugin, MethodCallHandler {
           String code = intent.getStringExtra("scannerdata");
           if (code != null && !code.isEmpty()){
             System.out.printf("---小码哥-----扫描结果：" + code);
+            eventSink.success(code);
+          }
+        }
+        if (CHENGWEI_SCAN_ACTION.equals(actionName)){
+          String code = intent.getStringExtra("data");
+          if (code != null && !code.isEmpty()){
+            System.out.printf("---成为-----扫描结果：" + code);
             eventSink.success(code);
           }
         }
