@@ -37,6 +37,8 @@ public class UbxScanPlugin implements FlutterPlugin, MethodCallHandler {
   private static final String SEUIC_SCAN_ACTION = "com.android.scanner.service_settings";
   /// 成为
   private static final String CHENGWEI_SCAN_ACTION = "com.scanner.broadcast";
+  /// 其他
+  private static final String OTHER_SCAN_ACTION = "other";
 
   @Override
   public void onAttachedToEngine(@NonNull FlutterPluginBinding flutterPluginBinding) {
